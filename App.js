@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import {
   Button,
@@ -22,20 +21,30 @@ export default function App() {
   }
   const obterPrevisoes = () => {
     setPrevisoes([]);
-    const target = `${endPoint}${cidade}&appid=${apiKey}`;
+    const targetI = `${endPointI}${cidade}&appid=${apiKey}`;
 
-    fetch(target)
+    fetch(targetI)
       .then((dados) => dados.json())
       .then((dados) => {
         setPrevisoes(dados["list"])
-        setCidade('')
-        Keyboard.dismiss()
+        let latlon = dados["city"];
+        const targetII = `${endPointII}lat=${latlon.coord.lat}&lon=${latlon.coor.lon}&appid=${apiKey}`;
+        fetch(targetII)
+          .then((dados) => dados.json())
+          .then((dados) => {
+            setPrevisoes(dados["current"])
+            setCidade('');
+            Keyboard.dismiss();
+          })
+
       });
   }
 
 
-  const endPoint = `https://api.openweathermap.org/data/2.5/forecast?lang=pt_br&units=metric&q=`;
+  const endPointII = ` https://api.openweathermap.org/data/2.5/onecall?lang=pt_br&units=metric&q=`
+  const endPointI = `https://api.openweathermap.org/data/2.5/forecast?lang=pt_br&units=metric&q=`;
   const apiKey = keys.weatherMapApiKey;
+
   return (
     <View style={styles.container}>
       <View style={styles.entrada}>
